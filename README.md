@@ -11,10 +11,10 @@ ContackGen is a contexctual cyber-attack data generator for Weka.
   - [Authors](#authors)
 
 ## Build
-Weka plugin are compiled with ant. To build the plugin, you need to install ant.
+Weka plugin are compiled with ant. To build the plugin, you need to install ant, java, maven, docker, libpcap...
 
 ```bash
-sudo apt-get install ant
+sudo apt-get install ant libpcap-dev docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
 Ant works with a build.xml file. This file contains the instructions to build the plugin (like a Makefile).

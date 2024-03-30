@@ -10,6 +10,7 @@
 -->
 
   <!-- set global properties for this build -->
+  <property name="name" value="ConTackGen" />
   <property name="src" value="src/main/java" />
   <property name="src-test" value="src/test/java" />
   <property name="lib" value="lib" />
@@ -59,7 +60,7 @@
       optimize="${optimization}"
       debug="${debug}"
       deprecation="${deprecation}"
-      source="1.6" target="1.6">
+      release="9">
       <!-- Import lib dependencies -->
       <classpath>
         <fileset dir="${lib}">
@@ -125,7 +126,7 @@
       optimize="${optimization}"
       debug="${debug}"
       deprecation="${deprecation}"
-      source="1.6" target="1.6">
+      release="9">
       <classpath refid="project.class.path" />
     </javac>
     <copy todir="${build}/testcases">
@@ -138,10 +139,10 @@
     </copy>
   </target>
 
-  <!-- Put everything in ${build}/testcases into the ${package}-tests.jar file -->
+  <!-- Put everything in ${build}/testcases into the ${ant.project.name}-tests.jar file -->
   <target name="jar_tests" depends="compile_tests, init_dist"
     description="Creates a jar file with the test cases in ./dist. Run with -Dpackage=[package name]">
-    <jar jarfile="${dist}/${package}-tests.jar"
+    <jar jarfile="${dist}/${ant.project.name}-tests.jar"
       basedir="${build}/testcases">
     </jar>
   </target>
@@ -157,18 +158,18 @@
     <mkdir dir="${dist}" />
   </target>
 
-  <!-- Put everything in ${build}/classes into the ${package}.jar file -->
+  <!-- Put everything in ${build}/classes into the ${ant.project.name}.jar file -->
   <target name="exejar" depends="compile, docs, init_dist"
     description="Create a binary jar file in ./dist">
-    <jar jarfile="${dist}/${package}.jar"
+    <jar jarfile="${dist}/${ant.project.name}.jar"
       basedir="${build}/classes">
     </jar>
   </target>
 
-  <target name="make_package" depends="clean, exejar"
-    description="Make the package zip file. Run with -Dpackage=[package name]">
-    <mkdir dir="${dist}/${package}" />
-    <copy todir="${dist}/${package}">
+  <target name="make_package" depends="exejar"
+    description="Make the package zip file.">
+    <mkdir dir="${dist}/${ant.project.name}" />
+    <copy todir="${dist}/${ant.project.name}">
       <fileset dir="${dist}">
         <include name="*.jar" />
       </fileset>
@@ -179,22 +180,22 @@
       </fileset>
     </delete>
     <copy file="Description.props"
-      todir="${dist}/${package}" />
-    <mkdir dir="${dist}/${package}/lib" />
-    <copy todir="${dist}/${package}/lib">
+      todir="${dist}/${ant.project.name}" />
+    <mkdir dir="${dist}/${ant.project.name}/lib" />
+    <copy todir="${dist}/${ant.project.name}/lib">
       <fileset dir="${lib}">
         <include name="*.jar" />
         <include name="*.zip" />
       </fileset>
     </copy>
-    <mkdir dir="${dist}/${package}/doc" />
-    <copy todir="${dist}/${package}/doc">
+    <mkdir dir="${dist}/${ant.project.name}/doc" />
+    <copy todir="${dist}/${ant.project.name}/doc">
       <fileset dir="${doc}">
         <include name="**/*" />
       </fileset>
     </copy>
-    <mkdir dir="${dist}/${package}/src" />
-    <copy todir="${dist}/${package}">
+    <mkdir dir="${dist}/${ant.project.name}/src" />
+    <copy todir="${dist}/${ant.project.name}">
       <fileset dir=".">
         <include name="*.xml" />
         <include name="src/**/*.excludes" />
@@ -215,16 +216,16 @@
         <include name="src/**/*.matrix" />
       </fileset>
     </copy>
-    <zip destfile="${dist}/${package}.zip"
-      basedir="${dist}/${package}">
+    <zip destfile="${dist}/${ant.project.name}.zip"
+      basedir="${dist}/${ant.project.name}">
     </zip>
   </target>
 
-  <!-- Put all .java, and .props files into ${dist}/${package}-src.jar-->
+  <!-- Put all .java, and .props files into ${dist}/${ant.project.name}-src.jar-->
   <target name="srcjar" depends="init_dist, init_all"
     description="Create a jar file containing weka source in ./dist. Run with -Dpackage=[package name]">
     <!-- jar up the source -->
-    <jar jarfile="${dist}/${package}-src.jar"
+    <jar jarfile="${dist}/${ant.project.name}-src.jar"
       basedir=".">
       <include name="*.xml" />
       <include name="src/**/*.excludes" />
@@ -253,12 +254,5 @@
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}" />
     <delete dir="${dist}" />
-  </target>
-
-  <target name="superclean" depends="clean"
-    description="Clean plus removes source trees! and doc directories">
-    <!-- WARNING, this deletes the source and doc directories -->
-    <delete dir="${src}" />
-    <delete dir="${doc}" />
   </target>
 </project>
