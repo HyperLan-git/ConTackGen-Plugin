@@ -14,6 +14,7 @@
   <description>
   </description>
   <url>http://weka.sourceforge.net/doc.packages/PACKAGE</url>
+
   <organization>
     <name>University of Waikato, Hamilton, NZ</name>
     <url>http://www.waikato.ac.nz/</url>
@@ -136,14 +137,15 @@
       <version>2.0.7</version>
     </dependency>
     <dependency>
-      <groupId>org.pcap4j</groupId>
-      <artifactId>pcap4j-core</artifactId>
-      <version>${pcap4j-core-version}</version>
+      <groupId>io.pkts</groupId>
+      <artifactId>pkts-core</artifactId>
+      <version>${pkts.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>org.pcap4j</groupId>
-      <artifactId>pcap4j-packetfactory-static</artifactId>
-      <version>${pcap4j-core-version}</version>
+      <groupId>io.pkts</groupId>
+      <artifactId>pkts-streams</artifactId>
+      <version>${pkts.version}</version>
     </dependency>
 
     <dependency>
@@ -157,6 +159,7 @@
 
   <properties>
     <pcap4j-core-version>RELEASE</pcap4j-core-version>
+    <pkts.version>3.0.10</pkts.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
