@@ -23,6 +23,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
+import com.github.dockerjava.api.async.ResultCallback.Adapter;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.exception.NotFoundException;
@@ -98,7 +99,7 @@ public class Pcap extends ClassificationGenerator {
 
 	// Generator accepted attribute
 	private static final String[] ACCEPTED_DOCKER_IMAGES = {
-			"fersuy/contackgen-ubuntu2204:1.1.0"
+			"kiddes/rollbackoldimage:latest"
 	};
 
 	// Generator attributes
@@ -258,7 +259,7 @@ public class Pcap extends ClassificationGenerator {
 	 * @return the default Docker image.
 	 */
 	protected String defaultDockerImage() {
-		return "fersuy/contackgen-ubuntu2204:1.1.0";
+		return "kiddes/rollbackoldimage:latest";
 	}
 
 	/**
@@ -728,7 +729,7 @@ public class Pcap extends ClassificationGenerator {
 		System.out.println("Run Docker");
 
 		// Docker parameters
-		String containerName = "contackgen-ubuntu2204";
+		String containerName = "rollbackoldimage";
 		String containerFile = "/data/capture.pcap";
 
 		// Get the Docker client
@@ -753,7 +754,7 @@ public class Pcap extends ClassificationGenerator {
 
 		// Run the container
 		dockerRun(dockerImage, containerName, dockerClient);
-		dockerExec("./payload.sh -d " + duration, containerName, dockerClient);
+		Adapter<Frame> exec = dockerExec("./payload.sh -d " + duration, containerName, dockerClient);
 
 		// Get the IP address of the container
 		String ipAddress = dockerInspectIP(containerName, dockerClient);
@@ -762,9 +763,10 @@ public class Pcap extends ClassificationGenerator {
 		System.out.println("Start UDP DOS");
 		UDPDos udp = new UDPDos(ipAddress);
 		udp.start();
+		while(udp.isAlive());
 
-		// Sleep 20 seconds
-		Thread.sleep(duration * 1000);
+		exec.awaitCompletion();
+		dockerExec("ls -al /data", containerName, dockerClient).awaitCompletion();
 
 		dockerCp(pcapFullPath, containerName, containerFile, dockerClient);
 
@@ -913,14 +915,27 @@ public class Pcap extends ClassificationGenerator {
 	 * @param command the command to execute
 	 * @param containerName the name of the container
 	 * @param dockerClient the Docker client
+	 * @return 
 	 */
-	private static void dockerExec(String command, String containerName, DockerClient dockerClient) {
+	private static Adapter<Frame> dockerExec(String command, String containerName, DockerClient dockerClient) throws InterruptedException {
 		// Execute the payload.sh in the container
 		System.out.println("Execute " + command + " in the container");
-		dockerClient
-		.execStartCmd(dockerClient.execCreateCmd(containerName).withAttachStdout(true)
+		return dockerClient
+		.execStartCmd(dockerClient.execCreateCmd(containerName).withAttachStdout(true).withAttachStderr(true)
 				.withCmd("bash", "-c", command).exec().getId())
-		.exec(new ResultCallback.Adapter<Frame>());
+		.exec(new ResultCallback.Adapter<Frame>() {
+			@Override
+			public void onNext(Frame object) {
+				super.onNext(object);
+				System.out.println("Message from docker: " + object);
+			}
+
+			@Override
+			public void onError(Throwable throwable) {
+				super.onError(throwable);
+				throwable.printStackTrace();
+			}
+		});
 	}
 
 	/**

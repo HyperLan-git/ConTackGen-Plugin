@@ -13,6 +13,7 @@ import io.pkts.protocol.Protocol;
 public class TcpUdpPacketHandler implements PacketHandler {
     @Override
     public boolean nextPacket(Packet packet) throws IOException {
+    	System.out.println(packet);
         // Check the packet protocol
         if (packet.hasProtocol(Protocol.TCP)) {
             // Cast the packet to subclass
