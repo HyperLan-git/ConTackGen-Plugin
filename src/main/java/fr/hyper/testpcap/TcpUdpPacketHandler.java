@@ -16,6 +16,7 @@ public class TcpUdpPacketHandler implements PacketHandler {
     	System.out.println(packet);
         // Check the packet protocol
         if (packet.hasProtocol(Protocol.TCP)) {
+        	System.out.println("TCP");
             // Cast the packet to subclass
             TCPPacket tcpPacket = (TCPPacket) packet.getPacket(Protocol.TCP);
 
@@ -26,6 +27,7 @@ public class TcpUdpPacketHandler implements PacketHandler {
                 System.out.println("TCP: " + buffer);
             }
         } else if (packet.hasProtocol(Protocol.UDP)) {
+        	System.out.println("UDP");
             // Cast the packet to subclass
             UDPPacket udpPacket = (UDPPacket) packet.getPacket(Protocol.UDP);
 
@@ -35,6 +37,10 @@ public class TcpUdpPacketHandler implements PacketHandler {
             if (buffer != null) {
                 System.out.println("UDP: " + buffer);
             }
+        } else if(packet.hasProtocol(Protocol.IPv4)) {
+        	System.out.println("IP4");
+        } else if(packet.hasProtocol(Protocol.IPv6)) {
+        	System.out.println("IP6");
         }
 
         // Return true if you want to keep receiving next packet.

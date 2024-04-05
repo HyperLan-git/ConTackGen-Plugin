@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,11 +32,16 @@ import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ContainerNetwork;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientConfig;
+import com.github.dockerjava.core.DockerClientImpl;
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
 
 import io.pkts.PacketHandler;
 import io.pkts.framer.FramingException;
 import io.pkts.packet.IPv4Packet;
+import io.pkts.packet.IPv6Packet;
 import io.pkts.packet.Packet;
 import io.pkts.protocol.Protocol;
 import weka.core.Attribute;
@@ -80,6 +86,7 @@ public class Pcap extends ClassificationGenerator {
 	// Dataset attributes
 	private static Map<String, Attribute> datasetAttributes = new HashMap<String, Attribute>();
 
+	// TODO recode all this shit
 	// Pcap attributes
 	private static String[] srcIps;
 	private static String[] dstIps;
@@ -495,7 +502,7 @@ public class Pcap extends ClassificationGenerator {
 		dockerMain(getDockerImage(), getDuration(), getPcapFullPath());
 
 		Instances result = new Instances(m_DatasetFormat, 0);
-		for (int i = 0; i < getMaxPackets(); i++) {
+		for (int i = 0; i < getMaxPackets() && i < srcIps.length; i++) {
 			// Equivalent to the generateExample method
 
 			// Create a new instance with the same format as the dataset
@@ -674,7 +681,7 @@ public class Pcap extends ClassificationGenerator {
 		pcap.loop(new PacketHandler() {
 			@Override
 			public boolean nextPacket(Packet packet) throws IOException {
-				if(!packet.hasProtocol(Protocol.IPv4)) return true;
+				if(!packet.hasProtocol(Protocol.IPv4) && !packet.hasProtocol(Protocol.IPv6)) return true;
 				parsePacket(packet);
 				// Set the packet timestamp
 				timeStamps = ArrayUtils.add(timeStamps, packet.getArrivalTime());
@@ -694,22 +701,39 @@ public class Pcap extends ClassificationGenerator {
 	 */
 	private static void parsePacket(Packet packet) throws IOException {
 		System.out.println("Parse packet: " + packet);
-		if(!packet.hasProtocol(Protocol.IPv4)) return;
-		IPv4Packet header = (IPv4Packet)packet.getPacket(Protocol.IPv4);
-
-		dstIps = ArrayUtils.add(dstIps, header.getDestinationIP());
-		srcIps = ArrayUtils.add(srcIps, header.getSourceIP());
-		types = ArrayUtils.add(types, header.getProtocol().toString());
-		srcPorts = ArrayUtils.add(srcPorts, header.getSourceIP().toString());
-		dstPorts = ArrayUtils.add(dstPorts, header.getDestinationIP().toString());
-		versions = ArrayUtils.add(versions, header.getVersion());
-		IHLs = ArrayUtils.add(IHLs, header.getHeaderLength());
-		lengths = ArrayUtils.add(lengths, header.getTotalIPLength());
-		identifications = ArrayUtils.add(identifications, header.getIdentification());
-		fragmentOffsets = ArrayUtils.add(fragmentOffsets, header.getFragmentOffset());
-		TTLs = ArrayUtils.add(TTLs, header.getTimeToLive());
-		protocols = ArrayUtils.add(protocols, header.getProtocol().getLinkType());
-		headerChecksums = ArrayUtils.add(headerChecksums, Integer.toHexString(header.getIpChecksum()));
+		if(packet.hasProtocol(Protocol.IPv4)) {
+			IPv4Packet header = (IPv4Packet)packet.getPacket(Protocol.IPv4);
+	
+			dstIps = ArrayUtils.add(dstIps, header.getDestinationIP());
+			srcIps = ArrayUtils.add(srcIps, header.getSourceIP());
+			types = ArrayUtils.add(types, header.getProtocol().toString());
+			srcPorts = ArrayUtils.add(srcPorts, header.getSourceIP().toString());
+			dstPorts = ArrayUtils.add(dstPorts, header.getDestinationIP().toString());
+			versions = ArrayUtils.add(versions, header.getVersion());
+			IHLs = ArrayUtils.add(IHLs, header.getHeaderLength());
+			lengths = ArrayUtils.add(lengths, header.getTotalIPLength());
+			identifications = ArrayUtils.add(identifications, header.getIdentification());
+			fragmentOffsets = ArrayUtils.add(fragmentOffsets, header.getFragmentOffset());
+			TTLs = ArrayUtils.add(TTLs, header.getTimeToLive());
+			protocols = ArrayUtils.add(protocols, header.getProtocol().getLinkType());
+			headerChecksums = ArrayUtils.add(headerChecksums, Integer.toHexString(header.getIpChecksum()));
+		} else if(packet.hasProtocol(Protocol.IPv6)) {
+			IPv6Packet header = (IPv6Packet)packet.getPacket(Protocol.IPv6);
+	
+			dstIps = ArrayUtils.add(dstIps, header.getDestinationIP());
+			srcIps = ArrayUtils.add(srcIps, header.getSourceIP());
+			types = ArrayUtils.add(types, header.getProtocol().toString());
+			srcPorts = ArrayUtils.add(srcPorts, header.getSourceIP().toString());
+			dstPorts = ArrayUtils.add(dstPorts, header.getDestinationIP().toString());
+			versions = ArrayUtils.add(versions, header.getVersion());
+			IHLs = ArrayUtils.add(IHLs, header.getHeaderLength());
+			lengths = ArrayUtils.add(lengths, header.getTotalIPLength());
+			identifications = ArrayUtils.add(identifications, header.getIdentification());
+			fragmentOffsets = ArrayUtils.add(fragmentOffsets, header.getFragmentOffset());
+			TTLs = ArrayUtils.add(TTLs, header.getHopLimit());
+			protocols = ArrayUtils.add(protocols, header.getProtocol().getLinkType());
+			headerChecksums = ArrayUtils.add(headerChecksums, "null"); // ipv6 does not have checksums
+		}
 	}
 
 	/**
@@ -734,7 +758,18 @@ public class Pcap extends ClassificationGenerator {
 
 		// Get the Docker client
 		System.out.println("Get Docker client");
-		DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+			    .withDockerTlsVerify(false)
+			    .withRegistryUsername("dockeruser")
+			    .build();
+		DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+			    .dockerHost(config.getDockerHost())
+			    .sslConfig(config.getSSLConfig())
+			    .maxConnections(100)
+			    .connectionTimeout(Duration.ofSeconds(10))
+			    .responseTimeout(Duration.ofSeconds(30))
+			    .build();
+		DockerClient dockerClient = DockerClientImpl.getInstance(config, httpClient);
 		if(dockerClient == null) {
 			throw new IllegalStateException("Could not connect to docker !");
 		}
