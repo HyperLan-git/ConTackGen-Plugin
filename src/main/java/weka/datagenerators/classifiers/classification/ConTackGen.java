@@ -323,7 +323,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public boolean getSingleModeFlag() throws Exception {
-		return true;
+		return false;
 	}
 
 	/**
