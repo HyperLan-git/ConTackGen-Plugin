@@ -304,7 +304,7 @@ public class ConTackGen extends ClassificationGenerator {
 	@Override
 	public String generateStart() throws Exception {
 		//TODO
-		return "";
+		return "prout";
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public String generateFinished() throws Exception {
-		return null;
+		return "Wallahi Im finished";
 	}
 
 	/**
@@ -323,7 +323,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public boolean getSingleModeFlag() throws Exception {
-		return false;
+		return true;
 	}
 
 	/**
