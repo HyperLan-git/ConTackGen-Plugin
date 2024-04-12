@@ -3,19 +3,17 @@ package weka.datagenerators.classifiers.classification;
 import static fr.contacgen.ConTacGenUtils.defaultDockerImage;
 import static fr.contacgen.ConTacGenUtils.defaultDuration;
 import static fr.contacgen.ConTacGenUtils.defaultMaxPackets;
-import static fr.contacgen.ConTacGenUtils.defaultTimestampFormat;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
-import fr.contacgen.ConTackGenPacketHandler;
+import fr.contacgen.ConTacGenPacketHandler;
 import fr.contacgen.DockerRunner;
 import fr.contacgen.PacketData;
 import fr.contacgen.UDPDos;
@@ -46,13 +44,12 @@ import weka.datagenerators.ClassificationGenerator;
  */
 @SuppressWarnings("serial")
 public class ConTackGen extends ClassificationGenerator {
+	public static final String DATE_STRING = "yyyy-MM-dd HH:mm:ss";
 
 	// Data set attributes
 	private static final Attribute[] DATASET_ATTRIBUTES = new Attribute[] {
 			new Attribute("srcIp", true),
 			new Attribute("dstIp", true),
-			new Attribute("srcPort", true),
-			new Attribute("dstPort", true),
 			new Attribute("type", true),
 			new Attribute("headerChecksum", true),
 			new Attribute("protocol"),
@@ -63,14 +60,13 @@ public class ConTackGen extends ClassificationGenerator {
 			new Attribute("fragmentOffset"),
 			new Attribute("TTL"),
 			new Attribute("timer"),
-			new Attribute("timestamp", "") // Need to add format after
+			new Attribute("timestamp", DATE_STRING),
+			new Attribute("content", true)
 	};
 
 	// Generator attributes
-	private String dockerImage = defaultDockerImage(),
-			timestampFormat = defaultTimestampFormat();
-	private int duration = defaultDuration(),
-			maxPackets = defaultMaxPackets();
+	private String dockerImage = defaultDockerImage();
+	private int duration = defaultDuration();
 
 	/**
 	 * Returns a string describing this data generator.
@@ -90,9 +86,7 @@ public class ConTackGen extends ClassificationGenerator {
 
 	public static final Option[] OPTIONS = {
 			new Option("\tThe docker image to use for the simulation. (default: " + defaultDockerImage() + ")", "dockerImage", 1, "-dockerImage <dockerImage>"),
-			new Option("\tThe network traffic captur duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>"),
-			new Option("\tThe max number of packets to parse. (default: " + defaultMaxPackets() + ")", "maxPackets", 1, "-maxPackets <maxPackets>"),
-			new Option("\tThe timestamp format. (default: " + defaultTimestampFormat() + ")", "timestampFormat", 1, "-timestampFormat <timestampFormat>")
+			new Option("\tThe network traffic captur duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>")
 	};
 
 	/**
@@ -100,7 +94,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public Enumeration<Option> listOptions() {
-		Vector<Option> newVector = enumToVector(super.listOptions());
+		Collection<Option> newVector = enumToVector(super.listOptions());
 		newVector.addAll(Arrays.asList(OPTIONS));
 		return Collections.enumeration(newVector);
 	}
@@ -116,26 +110,13 @@ public class ConTackGen extends ClassificationGenerator {
 		super.setOptions(options);
 
 		// Set the docker image
-		String dockerImage = Utils.getOption("dockerImage", options);
+		String image = Utils.getOption("dockerImage", options);
 		// TODO check docker image format
-		this.dockerImage = (dockerImage != "" ? dockerImage : defaultDockerImage());
+		this.dockerImage = (image != "" ? image : defaultDockerImage());
 
 		// Set the duration
 		String duration = Utils.getOption("duration", options);
 		this.duration = (duration != "" ? Integer.parseInt(duration) : defaultDuration());
-
-		// Set the max number of packets
-		String maxPackets = Utils.getOption("maxPackets", options);
-		this.maxPackets = (maxPackets != "" ? Integer.parseInt(maxPackets) : defaultMaxPackets());
-
-		// Set the time stamp format
-		String timestampFormat = Utils.getOption("timestampFormat", options);
-		try {
-			new SimpleDateFormat(timestampFormat);
-		} catch (IllegalArgumentException e) {
-			timestampFormat = "";
-		}
-		this.timestampFormat = (timestampFormat != "" ? timestampFormat : defaultTimestampFormat());
 	}
 
 	/**
@@ -145,14 +126,12 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public String[] getOptions() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		result.addAll(Arrays.asList(super.getOptions()));
 
 		result.addAll(Arrays.asList(
 				"-dockerImage", dockerImage,
-				"-duration", String.valueOf(duration),
-				"-maxPackets", String.valueOf(maxPackets),
-				"-timestampFormat", timestampFormat
+				"-duration", String.valueOf(duration)
 				));
 		return result.toArray(new String[0]);
 	}
@@ -169,12 +148,9 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public Instances defineDataFormat() throws Exception {
-		super.defineDataFormat();
-		// Set up the attributes
-		ArrayList<Attribute> atts = new ArrayList<Attribute>(Arrays.asList(DATASET_ATTRIBUTES));
-		atts.set(atts.size() - 1, new Attribute("timestamp", this.timestampFormat));
-
-		return m_DatasetFormat = new Instances(getRelationNameToUse(), atts, 0);
+		ArrayList<Attribute> atts = new ArrayList<>(Arrays.asList(DATASET_ATTRIBUTES));
+		m_DatasetFormat = new Instances(getRelationNameToUse(), atts, 0);
+		return super.defineDataFormat();
 	}
 
 	/**
@@ -192,7 +168,7 @@ public class ConTackGen extends ClassificationGenerator {
 	}
 
 	public void handlePacket(PacketData packet, Instances inst) {
-		if(inst.size() >= this.maxPackets) return;
+		if(inst.size() >= this.getNumExamples()) return;
 
 		// Create a new instance with the same format as the data set
 		Instance instance = new DenseInstance(inst.numAttributes());
@@ -202,19 +178,13 @@ public class ConTackGen extends ClassificationGenerator {
 		for (int i = 0; i < inst.numAttributes(); i++) {
 			final Attribute entry = inst.attribute(i);
 			String value = null;
-			long numVal = 0;
+			double numVal = 0;
 			switch(entry.name()) {
 			case "srcIp":
 				value = packet.getSrcIP();
 				break;
 			case "dstIp":
 				value = packet.getDstIP();
-				break;
-			case "srcPort":
-				value = packet.getSrcPort();
-				break;
-			case "dstPort":
-				value = packet.getDstPort();
 				break;
 			case "type":
 				value = packet.getType();
@@ -232,7 +202,7 @@ public class ConTackGen extends ClassificationGenerator {
 				numVal = packet.getHeaderLength();
 				break;
 			case "length":
-				numVal = packet.getVersion();
+				numVal = packet.getTotalLength();
 				break;
 			case "identification":
 				numVal = packet.getId();
@@ -243,19 +213,22 @@ public class ConTackGen extends ClassificationGenerator {
 			case "TTL":
 				numVal = packet.getTTL();
 				break;
+			case "content":
+				value = packet.getContentHex();
+				break;
 			case "timer":
-				numVal = packet.getTimer();
+				numVal = packet.getTimer() / 1000.;
 				break;
 			case "timestamp":
-				instance.setValue(entry, packet.getTimestamp());
-				continue;
+				numVal = packet.getTimestamp() / 1000.;
+				break;
 			default:
 				throw new IllegalArgumentException("Error setting attribute '" + entry.name() + "' is unrecognized.");
 			}
-			if(value == null)
-				instance.setValue(entry, numVal);
-			else
+			if(value != null)
 				instance.setValue(entry, value);
+			else
+				instance.setValue(entry, numVal);
 		}
 
 		inst.add(instance);
@@ -274,11 +247,10 @@ public class ConTackGen extends ClassificationGenerator {
 	@Override
 	public Instances generateExamples() throws IllegalStateException, InterruptedException, IOException {
 		System.out.println("Generating data set...");
+		ConTacGenPacketHandler handler = ConTacGenPacketHandler.getInstance();
 
 		// Check if the data set format is defined
-		if (this.m_DatasetFormat == null) {
-			throw new IllegalStateException("Dataset format not defined.");
-		}
+		if (this.m_DatasetFormat == null) throw new IllegalStateException("Dataset format not defined.");
 
 		// Start the docker container and run udpdos on it
 		DockerRunner.dockerMain(dockerImage, (InetAddress t) -> {
@@ -286,10 +258,7 @@ public class ConTackGen extends ClassificationGenerator {
 		}, this.duration);
 
 		Instances result = new Instances(this.m_DatasetFormat, 0);
-		ConTackGenPacketHandler handler = ConTackGenPacketHandler.getInstance();
-		handler.foreach((PacketData packet) -> {
-			handlePacket(packet, result);
-		}).clear();
+		handler.foreach((PacketData packet) -> handlePacket(packet, result)).clear();
 
 		return result;
 	}

@@ -23,6 +23,8 @@ import com.github.dockerjava.api.model.Frame;
 
 public class DockerRunner {
 
+	private DockerRunner() {}
+
 	/**
 	 * Run a docker container.
 	 * Execute the payload.sh script in the container.
@@ -37,7 +39,7 @@ public class DockerRunner {
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	public static void dockerMain(String dockerImage, Consumer<InetAddress> toRun, int duration) throws InterruptedException, IOException {
+	public static ConTacGenPacketHandler dockerMain(String dockerImage, Consumer<InetAddress> toRun, int duration) throws InterruptedException, IOException {
 		File tmpFile = new File(System.getProperty("java.io.tmpdir") + "/capture.pcap");
 		System.out.println("Run Docker");
 
@@ -74,12 +76,7 @@ public class DockerRunner {
 
 		// Start UDP DOS
 		System.out.println("Start UDP DOS");
-		Runnable task = new Runnable() {
-			@Override
-			public void run() {
-				toRun.accept(address);
-			}
-		};
+		Runnable task = () -> toRun.accept(address);
 		Thread attack = new Thread(task);
 		attack.start();
 
@@ -96,10 +93,11 @@ public class DockerRunner {
 		System.out.println("Stop UDP DOS");
 
 		// Parse the pcap file
-		ConTackGenPacketHandler handler = ConTackGenPacketHandler.getInstance();
+		ConTacGenPacketHandler handler = ConTacGenPacketHandler.getInstance();
 		handler.clear();
 
 		readPcap(tmpFile, handler);
 		tmpFile.delete();
+		return handler;
 	}
 }

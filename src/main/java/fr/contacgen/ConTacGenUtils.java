@@ -233,7 +233,7 @@ public class ConTacGenUtils {
 	 * @return the default duration.
 	 */
 	public static int defaultDuration() {
-		return 10;
+		return 20;
 	}
 
 	/**
@@ -243,15 +243,6 @@ public class ConTacGenUtils {
 	 */
 	public static int defaultMaxPackets() {
 		return 1000;
-	}
-
-	/**
-	 * returns the default timestamp format.
-	 * 
-	 * @return the default timestamp format.
-	 */
-	public static String defaultTimestampFormat() {
-		return "yyyy-MM-dd HH:mm:ss.SSS";
 	}
 
 	public static DockerClient getDockerClient() {

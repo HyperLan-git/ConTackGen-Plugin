@@ -9,7 +9,7 @@ import io.pkts.packet.Packet;
 import io.pkts.protocol.Protocol;
 
 public class PacketData {
-	private final String srcIP, dstIP, srcPort, dstPort, type, checksum;
+	private final String srcIP, dstIP, type, checksum, content;
 	private final int version, headerLength, totalLength, id, fragmentOffset, TTL;
 	private final long protocol, timestamp, timer;
 
@@ -27,10 +27,8 @@ public class PacketData {
 			this.TTL = ((IPv6Packet) p).getHopLimit();
 			this.type = ((IPv6Packet) p).getProtocol().getName();
 		} else throw new IllegalArgumentException("Not an IPv4 or IPv6 packet !");
-		this.srcIP = p.getDestinationIP();
+		this.srcIP = p.getSourceIP();
 		this.dstIP = p.getDestinationIP();
-		this.srcPort = p.getDestinationIP();
-		this.dstPort = p.getDestinationIP();
 
 		this.version = p.getVersion();
 		this.headerLength = p.getHeaderLength();
@@ -39,6 +37,7 @@ public class PacketData {
 		this.fragmentOffset = p.getFragmentOffset();
 		this.protocol = p.getProtocol().getLinkType() == null ? 0 : p.getProtocol().getLinkType();
 		this.timestamp = p.getArrivalTime();
+		this.content = p.getPayload().dumpAsHex();
 		this.timer = timer;
 	}
 
@@ -48,14 +47,6 @@ public class PacketData {
 
 	public String getDstIP() {
 		return dstIP;
-	}
-
-	public String getSrcPort() {
-		return srcPort;
-	}
-
-	public String getDstPort() {
-		return dstPort;
 	}
 
 	public String getType() {
@@ -102,5 +93,7 @@ public class PacketData {
 		return timestamp;
 	}
 
-
+	public String getContentHex() {
+		return content;
+	}
 }
