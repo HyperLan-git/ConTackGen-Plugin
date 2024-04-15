@@ -2,6 +2,7 @@ package fr.contacgen;
 
 import java.io.IOException;
 
+import io.pkts.buffer.Buffer;
 import io.pkts.packet.IPPacket;
 import io.pkts.packet.IPv4Packet;
 import io.pkts.packet.IPv6Packet;
@@ -12,6 +13,7 @@ public class PacketData {
 	private final String srcIP, dstIP, type, checksum, content;
 	private final int version, headerLength, totalLength, id, fragmentOffset, TTL;
 	private final long protocol, timestamp, timer;
+	private final boolean attack;
 
 	public PacketData(Packet packet, long timer) throws IOException {
 		IPPacket p;
@@ -37,8 +39,20 @@ public class PacketData {
 		this.fragmentOffset = p.getFragmentOffset();
 		this.protocol = p.getProtocol().getLinkType() == null ? 0 : p.getProtocol().getLinkType();
 		this.timestamp = p.getArrivalTime();
+		this.attack = checkAttack(p.getPayload());
 		this.content = p.getPayload().dumpAsHex();
 		this.timer = timer;
+	}
+
+	private static final boolean checkAttack(Buffer payload) throws IOException {
+		if(payload.getReadableBytes() < UDPDos.MAGIC.length + 8)
+			return false;
+		for(int i = 0; i < UDPDos.MAGIC.length; i++) {
+			// There seems to be 8 bytes of additional header
+			if(payload.getByte(i + 8) != UDPDos.MAGIC[i])
+				return false;
+		}
+		return true;
 	}
 
 	public String getSrcIP() {
@@ -95,5 +109,9 @@ public class PacketData {
 
 	public String getContentHex() {
 		return content;
+	}
+
+	public boolean isAttack() {
+		return attack;
 	}
 }

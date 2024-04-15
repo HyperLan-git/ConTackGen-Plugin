@@ -2,7 +2,7 @@
 # 
 
 # Package name (required)
-PackageName=ConTackGen
+PackageName=ConTacGen
 
 # Version (required)
 Version=1.0.0
@@ -11,13 +11,13 @@ Version=1.0.0
 Date=2023-04-06
 
 # Title (required)
-Title=ConTackGen
+Title=ConTacGen
 
 # Category (recommended)
 Category=Datagenerator
 
 # Author (required)
-Author=Mathieu SALLIOT <mathieu.salliot@yahoo.fr>, Pierre BLAIS <pierreblai@hotmail.fr>
+Author=Mathieu SALLIOT <mathieu.salliot@yahoo.fr>, Pierre BLAIS <pierreblai@hotmail.fr>, Youness REKIK <rekikyouness@gmail.com>
 
 # Maintainer (required)
 Maintainer=Pierre BLAIS <pierreblai@hotmail.fr>
@@ -26,7 +26,7 @@ Maintainer=Pierre BLAIS <pierreblai@hotmail.fr>
 License=GPL 2.0|Mozilla
 
 # Description (required)
-Description=ConTackGen is a contextual network traffic data generator.
+Description=ConTacGen is a contextual network traffic data generator.
 
 # Package URL for obtaining the package archive (required)
 PackageURL=http://somewhere.net/weka/funkyPackage.zip?download

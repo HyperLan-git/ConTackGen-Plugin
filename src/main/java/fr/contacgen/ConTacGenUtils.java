@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback.Adapter;
+import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.ExecStartCmd;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.exception.NotFoundException;
@@ -28,10 +29,8 @@ import com.github.dockerjava.transport.DockerHttpClient;
 
 import io.pkts.PacketHandler;
 import io.pkts.framer.FramingException;
-import weka.core.logging.Logger;
 
 public class ConTacGenUtils {
-	public static final Logger LOGGER = Logger.getSingleton();
 
 	/**
 	 * Pull a docker image.
@@ -154,7 +153,7 @@ public class ConTacGenUtils {
 	 * @param dockerClient the Docker client
 	 * @return 
 	 */
-	public static Adapter<Frame> dockerExec(String command, String containerName, DockerClient dockerClient) throws InterruptedException {
+	public static Adapter<Frame> dockerExec(String command, String containerName, DockerClient dockerClient) {
 		System.out.println("Execute " + command + " in the container");
 		String id = dockerClient.execCreateCmd(containerName)
 				.withAttachStdout(true)
@@ -189,7 +188,9 @@ public class ConTacGenUtils {
 	public static void dockerRun(String dockerImage, String containerName, DockerClient dockerClient) {
 		// Create container
 		System.out.println("Create Docker container");
-		dockerClient.createContainerCmd(dockerImage).withName(containerName).withTty(true).exec();
+		try(CreateContainerCmd cmd = dockerClient.createContainerCmd(dockerImage)) {
+			cmd.withName(containerName).withTty(true).exec();
+		}
 
 		// Start container
 		System.out.println("Start Docker container");
@@ -212,9 +213,9 @@ public class ConTacGenUtils {
 			}
 
 			// It's a file
-			FileOutputStream fos = new FileOutputStream(destFile);
-			IOUtils.copy(tis, fos);
-			fos.close();
+			try(FileOutputStream fos = new FileOutputStream(destFile)) {
+				IOUtils.copy(tis, fos);
+			}
 		}
 	}
 
@@ -224,7 +225,7 @@ public class ConTacGenUtils {
 	 * @return the default Docker image.
 	 */
 	public static String defaultDockerImage() {
-		return "contackgen/udpattack:1.0.0";
+		return "contackgen/server-attack:latest";
 	}
 
 	/**

@@ -5,19 +5,16 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>nz.ac.waikato.cms.weka</groupId>
-  <artifactId>Pcap</artifactId>
+  <groupId>fr.epita.lse</groupId>
+  <artifactId>ConTacGen</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>PACKAGE</name>
-  <description>
-  </description>
-  <url>http://weka.sourceforge.net/doc.packages/PACKAGE</url>
+  <name>ConTacGen</name>
 
   <organization>
-    <name>University of Waikato, Hamilton, NZ</name>
-    <url>http://www.waikato.ac.nz/</url>
+    <name>LSE</name>
+    <url>https://www.lse.epita.fr/</url>
   </organization>
   <licenses>
     <license>
@@ -26,35 +23,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <developers>
-    <developer>
-      <id>wekateam</id>
-      <name>The WEKA Team</name>
-      <email>wekalist@list.scms.waikato.ac.nz</email>
-    </developer>
-  </developers>
-
-  <mailingLists>
-    <mailingList>
-      <name>wekalist</name>
-      <subscribe>https://list.scms.waikato.ac.nz/mailman/listinfo/wekalist</subscribe>
-      <unsubscribe>https://list.scms.waikato.ac.nz/mailman/listinfo/wekalist</unsubscribe>
-      <archive>https://list.scms.waikato.ac.nz/mailman/htdig/wekalist/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
-
-  <scm>
-    <connection>scm:svn:https://svn.scms.waikato.ac.nz/svn/weka/trunk/packages/external/PACKAGE</connection>
-    <developerConnection>scm:svn:https://svn.scms.waikato.ac.nz/svn/weka/trunk/packages/external/PACKAGE</developerConnection>
-    <url>https://svn.scms.waikato.ac.nz/svn/weka/trunk/packages/external/PACKAGE</url>
-  </scm>
 
   <profiles>
     <profile>
@@ -146,6 +114,11 @@
       <groupId>io.pkts</groupId>
       <artifactId>pkts-streams</artifactId>
       <version>${pkts.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.55</version>
     </dependency>
 
     <dependency>
@@ -334,14 +307,6 @@
           <show>public</show>
           <outputDirectory>${project.basedir}/doc</outputDirectory>
         </configuration>
-        <executions>
-          <!-- <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution> -->
-        </executions>
       </plugin>
     </plugins>
   </build>

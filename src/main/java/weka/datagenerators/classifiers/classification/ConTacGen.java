@@ -2,7 +2,6 @@ package weka.datagenerators.classifiers.classification;
 
 import static fr.contacgen.ConTacGenUtils.defaultDockerImage;
 import static fr.contacgen.ConTacGenUtils.defaultDuration;
-import static fr.contacgen.ConTacGenUtils.defaultMaxPackets;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -16,6 +15,7 @@ import java.util.List;
 import fr.contacgen.ConTacGenPacketHandler;
 import fr.contacgen.DockerRunner;
 import fr.contacgen.PacketData;
+import fr.contacgen.SSHAttack;
 import fr.contacgen.UDPDos;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -37,13 +37,15 @@ import weka.datagenerators.ClassificationGenerator;
  * The available attacks are: UDPDDOS.
  * 
  * 
- * @author Mathieu Salliot (SanjiKush on GitHub, mathieu.salliot@yahoo.fr).
- * @author Pierre BLAIS (pierreblais or PierreBls on GitHub, pierreblais@hotmail.fr).
+ * @author Nidà Meddouri
+ * @author Mathieu Salliot (SanjiKush on GitHub, mathieu.salliot@yahoo.fr). v1 03/2023
+ * @author Pierre BLAIS (pierreblais or PierreBls on GitHub, pierreblais@hotmail.fr). v1 03/2023
+ * @author Rekik Youness v2 04/2024
  * 
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("serial")
-public class ConTackGen extends ClassificationGenerator {
+public class ConTacGen extends ClassificationGenerator {
 	public static final String DATE_STRING = "yyyy-MM-dd HH:mm:ss";
 
 	// Data set attributes
@@ -52,6 +54,7 @@ public class ConTackGen extends ClassificationGenerator {
 			new Attribute("dstIp", true),
 			new Attribute("type", true),
 			new Attribute("headerChecksum", true),
+			new Attribute("attack"),
 			new Attribute("protocol"),
 			new Attribute("version"),
 			new Attribute("IHL"),
@@ -85,8 +88,7 @@ public class ConTackGen extends ClassificationGenerator {
 	}
 
 	public static final Option[] OPTIONS = {
-			new Option("\tThe docker image to use for the simulation. (default: " + defaultDockerImage() + ")", "dockerImage", 1, "-dockerImage <dockerImage>"),
-			new Option("\tThe network traffic captur duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>")
+			new Option("\tThe network traffic capture duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>")
 	};
 
 	/**
@@ -109,11 +111,6 @@ public class ConTackGen extends ClassificationGenerator {
 	public void setOptions(String[] options) throws Exception {
 		super.setOptions(options);
 
-		// Set the docker image
-		String image = Utils.getOption("dockerImage", options);
-		// TODO check docker image format
-		this.dockerImage = (image != "" ? image : defaultDockerImage());
-
 		// Set the duration
 		String duration = Utils.getOption("duration", options);
 		this.duration = (duration != "" ? Integer.parseInt(duration) : defaultDuration());
@@ -130,7 +127,6 @@ public class ConTackGen extends ClassificationGenerator {
 		result.addAll(Arrays.asList(super.getOptions()));
 
 		result.addAll(Arrays.asList(
-				"-dockerImage", dockerImage,
 				"-duration", String.valueOf(duration)
 				));
 		return result.toArray(new String[0]);
@@ -213,6 +209,9 @@ public class ConTackGen extends ClassificationGenerator {
 			case "TTL":
 				numVal = packet.getTTL();
 				break;
+			case "attack":
+				numVal = packet.isAttack() ? 1 : 0;
+				break;
 			case "content":
 				value = packet.getContentHex();
 				break;
@@ -237,10 +236,8 @@ public class ConTackGen extends ClassificationGenerator {
 	/**
 	 * Generates a data set of network traffic.
 	 * 
-	 * (Look like our main function)
-	 * 
 	 * @return the generated data set
-	 * @throws IOException 
+	 * @throws IOException if a connection cannot be established with docker
 	 * @throws InterruptedException 
 	 * @throws IllegalStateException if the format of the data set is not defined
 	 */
@@ -252,9 +249,9 @@ public class ConTackGen extends ClassificationGenerator {
 		// Check if the data set format is defined
 		if (this.m_DatasetFormat == null) throw new IllegalStateException("Dataset format not defined.");
 
-		// Start the docker container and run udpdos on it
+		// Start the docker container and run the attack on it
 		DockerRunner.dockerMain(dockerImage, (InetAddress t) -> {
-			new UDPDos(t, this.m_Seed).run();
+			new UDPDos(t, m_Seed).run();
 		}, this.duration);
 
 		Instances result = new Instances(this.m_DatasetFormat, 0);
@@ -272,8 +269,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public String generateStart() throws Exception {
-		//TODO
-		return "prout";
+		return "ConTacGen data";
 	}
 
 	/**
@@ -284,7 +280,7 @@ public class ConTackGen extends ClassificationGenerator {
 	 */
 	@Override
 	public String generateFinished() throws Exception {
-		return "Wallahi Im finished";
+		return "";
 	}
 
 	/**
@@ -309,6 +305,6 @@ public class ConTackGen extends ClassificationGenerator {
 	 * @param args the command-line arguments
 	 */
 	public static void main(String[] args) {
-		runDataGenerator(new ConTackGen(), args);
+		runDataGenerator(new ConTacGen(), args);
 	}
 }

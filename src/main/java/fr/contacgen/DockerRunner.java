@@ -36,15 +36,15 @@ public class DockerRunner {
 	 * And manage the multi-threading.
 	 * 
 	 * @param dockerImage the docker image to run
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws InterruptedException if waiting for completion fails
+	 * @throws IOException if a connection cannot be established to docker
 	 */
 	public static ConTacGenPacketHandler dockerMain(String dockerImage, Consumer<InetAddress> toRun, int duration) throws InterruptedException, IOException {
 		File tmpFile = new File(System.getProperty("java.io.tmpdir") + "/capture.pcap");
 		System.out.println("Run Docker");
 
 		// Docker parameters
-		String containerName = "udpattack";
+		String containerName = "wekacontacgen";
 		String containerFile = "/data/capture.pcap";
 
 		// Get the Docker client
@@ -75,7 +75,7 @@ public class DockerRunner {
 		InetAddress address = InetAddress.getByName(ipAddress);
 
 		// Start UDP DOS
-		System.out.println("Start UDP DOS");
+		System.out.println("Start attack code");
 		Runnable task = () -> toRun.accept(address);
 		Thread attack = new Thread(task);
 		attack.start();
@@ -90,7 +90,7 @@ public class DockerRunner {
 		dockerRm(containerName, dockerClient);
 
 		// DEBUG LOG
-		System.out.println("Stop UDP DOS");
+		System.out.println("Stop attack");
 
 		// Parse the pcap file
 		ConTacGenPacketHandler handler = ConTacGenPacketHandler.getInstance();
