@@ -42,19 +42,26 @@ ConTackGen is a contextual cyber-attack data generator for Weka.
 1. **Install [Weka](https://waikato.github.io/weka-wiki/downloading_weka/)**
 
 2. **Install JDK:**
-   - Execute: ```sudo apt install default-jdk```
+   ```
+     sudo apt install default-jdk
+   ```
 
 3. **Install Ant:**
-   - Execute: ```sudo apt-get install ant```
+   ```
+   sudo apt install ant
+   ```
 
-4. **Install Docker:**
+5. **Install Docker:**
    - [Docker for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
    - [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/)
 
 
 ## Usage
 **Build the Plugin:**
-   - In Command Prompt/Terminal, execute: ```ant make_package -Dpackage=ConTackGen```
+   - In Command Prompt/Terminal, execute:
+```
+ant make_package -Dpackage=ConTackGen
+```
 
 **Install Plugin in Weka:**
    - Start Weka, go to `Tools` > `Package Manager`, select `Unofficial`, then `file/url` and choose `ConTackGen.zip`. Finally, click on `install` and restart Weka.
