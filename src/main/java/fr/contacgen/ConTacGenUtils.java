@@ -224,7 +224,7 @@ public class ConTacGenUtils {
 	 * @return the default Docker image.
 	 */
 	public static String defaultDockerImage() {
-		return "kiddes/rollbackoldimage:latest";
+		return "contackgen/udpattack:1.0.0";
 	}
 
 	/**

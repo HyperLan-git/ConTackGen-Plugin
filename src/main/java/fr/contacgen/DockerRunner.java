@@ -44,7 +44,7 @@ public class DockerRunner {
 		System.out.println("Run Docker");
 
 		// Docker parameters
-		String containerName = "rollbackoldimage";
+		String containerName = "udpattack";
 		String containerFile = "/data/capture.pcap";
 
 		// Get the Docker client
