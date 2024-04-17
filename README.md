@@ -31,7 +31,7 @@ ConTacGen is a contextual cyber-attack data generator for Weka.
 
 4. **Install [Apache Ant](https://ant.apache.org/manual/install.html)**
 
-5. Go to [Usage](#usage) section to use the plugin
+5. **Go to** [Usage](#usage) section to use the plugin
 
 ### Linux
 
