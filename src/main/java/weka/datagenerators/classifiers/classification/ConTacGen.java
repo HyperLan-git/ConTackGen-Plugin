@@ -1,21 +1,18 @@
 package weka.datagenerators.classifiers.classification;
 
 import static fr.contacgen.ConTacGenUtils.defaultDockerImage;
-import static fr.contacgen.ConTacGenUtils.defaultDuration;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Vector;
 
 import fr.contacgen.ConTacGenPacketHandler;
 import fr.contacgen.DockerRunner;
 import fr.contacgen.PacketData;
-import fr.contacgen.SSHAttack;
 import fr.contacgen.UDPDos;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -69,7 +66,7 @@ public class ConTacGen extends ClassificationGenerator {
 
 	// Generator attributes
 	private String dockerImage = defaultDockerImage();
-	private int duration = defaultDuration();
+	protected int duration = defaultDuration();
 
 	/**
 	 * Returns a string describing this data generator.
@@ -87,18 +84,14 @@ public class ConTacGen extends ClassificationGenerator {
 				+ "The available attacks are: UDPDDOS.\n";
 	}
 
-	public static final Option[] OPTIONS = {
-			new Option("\tThe network traffic capture duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>")
-	};
-
 	/**
 	 * @return an enumeration of all the available options.
 	 */
 	@Override
 	public Enumeration<Option> listOptions() {
-		Collection<Option> newVector = enumToVector(super.listOptions());
-		newVector.addAll(Arrays.asList(OPTIONS));
-		return Collections.enumeration(newVector);
+		Vector<Option> newVector = enumToVector(super.listOptions());
+		newVector.add(new Option("\tThe network traffic capture duration. (default: " + defaultDuration() + ")", "duration", 1, "-duration <duration>"));
+		return newVector.elements();
 	}
 
 	/**
@@ -126,9 +119,9 @@ public class ConTacGen extends ClassificationGenerator {
 		List<String> result = new ArrayList<>();
 		result.addAll(Arrays.asList(super.getOptions()));
 
-		result.addAll(Arrays.asList(
-				"-duration", String.valueOf(duration)
-				));
+		result.add("-duration");
+		result.add(String.valueOf(duration));
+
 		return result.toArray(new String[0]);
 	}
 
@@ -297,6 +290,28 @@ public class ConTacGen extends ClassificationGenerator {
 	@Override
 	public String getRevision() {
 		return "00000";
+	}
+
+	/**
+	 * returns the default duration.
+	 * 
+	 * @return the default duration.
+	 */
+	protected int defaultDuration() {
+		return 10;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	/**
+	 * Sets the duration.
+	 * 
+	 * @param duration the duration.
+	 */
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 	/**

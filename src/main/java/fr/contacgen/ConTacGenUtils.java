@@ -32,6 +32,8 @@ import io.pkts.framer.FramingException;
 
 public class ConTacGenUtils {
 
+	private ConTacGenUtils() {}
+
 	/**
 	 * Pull a docker image.
 	 * 
@@ -226,24 +228,6 @@ public class ConTacGenUtils {
 	 */
 	public static String defaultDockerImage() {
 		return "contackgen/server-attack:latest";
-	}
-
-	/**
-	 * returns the default duration.
-	 * 
-	 * @return the default duration.
-	 */
-	public static int defaultDuration() {
-		return 20;
-	}
-
-	/**
-	 * returns the default max number of packets.
-	 * 
-	 * @return the default max number of packets.
-	 */
-	public static int defaultMaxPackets() {
-		return 1000;
 	}
 
 	public static DockerClient getDockerClient() {
