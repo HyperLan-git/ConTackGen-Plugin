@@ -1,5 +1,5 @@
 # ConTackGen-Plugin 2.0
-conTackGen is a contextual cyber-attack data generator for Weka.
+ConTackGen is a contextual cyber-attack data generator for Weka.
 
 ## Installation
 
@@ -55,7 +55,7 @@ conTackGen is a contextual cyber-attack data generator for Weka.
 
 ## Compatibility
 
-conTackGen 2.0 has been tested and is compatible with the following software versions:
+ConTackGen 2.0 has been tested and is compatible with the following software versions:
 - **Operating Systems**:
   - Ubuntu 18.04, 20.04, 22.04
   - Windows 10, Windows 11
@@ -71,17 +71,17 @@ Please ensure that your system meets these requirements to avoid any issues duri
 ## Usage
 **Build the plugin**
  
-In a terminal/command prompt at the root of the conTackGen directory, execute :
+In a terminal/command prompt at the root of the ConTackGen directory, execute :
 ```
-ant make_package -Dpackage=conTackGen
+ant make_package -Dpackage=ConTackGen
 ```
-Plugin will be located inside `/conTackGen/dist/conTackGen.zip`
+Plugin will be located inside `/ConTackGen/dist/ConTackGen.zip`
 
 **Install Plugin in Weka:**
 
-   - Start Weka, go to `Tools` > `Package Manager`, select `Unofficial`, then `file/url` and choose `conTackGen.zip`. Finally, click on `install` and restart Weka.
+   - Start Weka, go to `Tools` > `Package Manager`, select `Unofficial`, then `file/url` and choose `ConTackGen.zip`. Finally, click on `install` and restart Weka.
 
-On the Weka main page, select `Workbench`, then `Generate`. Choose to select `conTackGen` under the classification directory, then click `Generate` to start the data generator.
+On the Weka main page, select `Workbench`, then `Generate`. Choose to select `ConTackGen` under the classification directory, then click `Generate` to start the data generator.
 > **The first use will take more time**, depending on your internet connection as you need to pull the docker image (only for the first use)
 
 ![image](https://github.com/HyperLan-git/ConTackGen-Plugin/assets/60754866/0872381e-9ca9-4ccd-839f-06ae546c2bde)
@@ -94,16 +94,16 @@ On the Weka main page, select `Workbench`, then `Generate`. Choose to select `co
    - In future releases, we plan to streamline the installation process for Windows users. Our goal is to eliminate the need for setting up Docker manually. This will make the initial setup quicker and more user-friendly.
 
 2. **General Installation Improvements**:
-   - We aim to simplify the installation process across all platforms. Enhancements will include automated scripts that reduce the number of steps required to get conTackGen up and running, potentially integrating more elements into a single installation package.
+   - We aim to simplify the installation process across all platforms. Enhancements will include automated scripts that reduce the number of steps required to get ConTackGen up and running, potentially integrating more elements into a single installation package.
 
 3. **Expansion of Attack Types**:
-   - Currently, conTackGen supports one fully operational type of cyber-attack simulation, with another in development. Future versions will include multiple attack types, increasing the versatility and utility of the plugin for diverse cybersecurity training and research applications.
+   - Currently, ConTackGen supports one fully operational type of cyber-attack simulation, with another in development. Future versions will include multiple attack types, increasing the versatility and utility of the plugin for diverse cybersecurity training and research applications.
 
 ### Limitations
 - The current version requires manual installation steps that may be challenging for users unfamiliar with Docker or development environments.
 - Limited to a small number of cyber-attack simulations, which may not cover all the potential scenarios users might need to simulate for comprehensive training or testing.
 
-By addressing these limitations in the upcoming conTackGen 3.0, we hope to enhance user experience and broaden the applicability of the tool in educational and professional settings.
+By addressing these limitations in the upcoming ConTackGen 3.0, we hope to enhance user experience and broaden the applicability of the tool in educational and professional settings.
 
 ## Authors
 > Version 1.0:
