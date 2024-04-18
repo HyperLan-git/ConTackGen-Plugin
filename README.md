@@ -87,6 +87,24 @@ On the Weka main page, select `Workbench`, then `Generate`. Choose to select `Co
 ![image](https://github.com/HyperLan-git/ConTackGen-Plugin/assets/60754866/0872381e-9ca9-4ccd-839f-06ae546c2bde)
 > Select "Edit..." to view data details.
 
+## Future Enhancements and Limitations
+
+### Future Enhancements
+1. **Simplify Windows Installation**:
+   - In future releases, we plan to streamline the installation process for Windows users. Our goal is to eliminate the need for setting up Docker manually. This will make the initial setup quicker and more user-friendly.
+
+2. **General Installation Improvements**:
+   - We aim to simplify the installation process across all platforms. Enhancements will include automated scripts that reduce the number of steps required to get ConTacGen up and running, potentially integrating more elements into a single installation package.
+
+3. **Expansion of Attack Types**:
+   - Currently, ConTacGen supports one fully operational type of cyber-attack simulation, with another in development. Future versions will include multiple attack types, increasing the versatility and utility of the plugin for diverse cybersecurity training and research applications.
+
+### Limitations
+- The current version requires manual installation steps that may be challenging for users unfamiliar with Docker or development environments.
+- Limited to a small number of cyber-attack simulations, which may not cover all the potential scenarios users might need to simulate for comprehensive training or testing.
+
+By addressing these limitations in the upcoming ConTacGen 3.0, we hope to enhance user experience and broaden the applicability of the tool in educational and professional settings.
+
 ## Authors
 > Version 1.0:
 - Mathieu SALLIOT (mathieu.salliot@epita.fr)
