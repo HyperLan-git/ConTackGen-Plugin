@@ -3,7 +3,7 @@ ConTackGen is a contextual cyber-attack data generator for Weka.
 
 ## Installation
 
-### Windows
+### Windows users
 
 1. **Install [Weka](https://waikato.github.io/weka-wiki/downloading_weka/)**
 
@@ -29,11 +29,11 @@ ConTackGen is a contextual cyber-attack data generator for Weka.
 
 3. **Install [JDK for Windows](https://www.oracle.com/java/technologies/downloads/#jdk22-windows)**
 
-4. **Install [Apache Ant](https://ant.apache.org/manual/install.html)**
+4. *(Optional) if you want to modify and recompile the plugin*, Install [Apache Ant](https://ant.apache.org/manual/install.html)
 
 5. **Go to** [Usage](#usage) section to use the plugin
 
-### Linux
+### Linux users
 
 1. **Install [Weka](https://waikato.github.io/weka-wiki/downloading_weka/)**
 
@@ -41,15 +41,14 @@ ConTackGen is a contextual cyber-attack data generator for Weka.
    ```
      sudo apt install default-jdk
    ```
+3. **Install Docker:**
+   - [Docker for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+   - [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/)
 
-3. **Install Ant:**
+4. *(Optional) if you want to modify and recompile the plugin*, Install **Ant**:
    ```
    sudo apt install ant
    ```
-
-4. **Install Docker:**
-   - [Docker for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
-   - [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/)
 
 5. Go to [Usage](#usage) section to use the plugin
 
@@ -69,13 +68,9 @@ ConTackGen 2.0 has been tested and is compatible with the following software ver
 Please ensure that your system meets these requirements to avoid any issues during installation and operation of the plugin.
 
 ## Usage
-**Build the plugin**
- 
-In a terminal/command prompt at the root of the ConTackGen directory, execute :
-```
-ant make_package -Dpackage=ConTackGen
-```
-Plugin will be located inside `/ConTackGen/dist/ConTackGen.zip`
+**Download ConTackGen plugin**
+- Download [latest release](https://github.com/HyperLan-git/ConTackGen-Plugin/releases) of ConTackGen plugin: `ConTackGen.zip`
+
 
 **Install Plugin in Weka:**
 
@@ -86,6 +81,16 @@ On the Weka main page, select `Workbench`, then `Generate`. Choose to select `Co
 
 ![image](https://github.com/HyperLan-git/ConTackGen-Plugin/assets/60754866/0872381e-9ca9-4ccd-839f-06ae546c2bde)
 > Select "Edit..." to view data details.
+
+**Build the plugin**
+
+If you want to modify the plugin you can modify the files then recompile the plugin:
+
+In a terminal/command prompt at the root of the ConTackGen directory, execute :
+```
+ant make_package -Dpackage=ConTackGen
+```
+Plugin will be located inside `/ConTackGen/dist/ConTackGen.zip`
 
 ## Future Enhancements and Limitations
 
@@ -112,7 +117,7 @@ By addressing these limitations in the upcoming ConTackGen 3.0, we hope to enhan
 - Luis RIBEIRO (luis.rebeiro@epita.fr)
 - Benjamin ALONZEAU (benjamin.alonzo@epita.fr)
 
-> Version 2.0:
+> Version 2.0(19/04/2024):
 - Aboubekre Sayoud (aboubekre.sayoud@epita.fr)
 - Simon Defoort (simon.defoort@epita.fr)
 - Natale Mamberti (natale.mamberti@epita.fr)
