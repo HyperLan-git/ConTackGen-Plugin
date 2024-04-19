@@ -4,6 +4,9 @@ ConTackGen is a contextual cyber-attack data generator for Weka.
 ## Installation
 
 ### Windows users
+You can watch the [video tutorial](https://youtu.be/nEsO7w1M3VI
+) to install the plugin.
+
 
 1. **Install [Weka](https://waikato.github.io/weka-wiki/downloading_weka/)**
 
