@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Enhancing the ConTackGen plugin for WEKA}
+\author{Aboubekre SAYOUD, Youness Rekik, Natale Mamberti, Simon Defoort}
+\date{EPITA, APPING 3}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Introduction}
+Efficient data management is crucial in machine learning. The ConTackGen Plugin was originally developed by students to automate the creation of large sets of data for machine learning, specifically for DDOS attack. This automation helps save time and reduce errors. However, the plugin was limited because it did not work well on all computer systems. We updated it to work on various Linux distributions and Windows. Additionally, we started adding a new feature that generates data for other types of attack, but didn't had the time to finish.
+
+\section{Materials and Methods}
+Our project was divided into improving compatibility and adding new features. We first updates the code to make it more readable and maintainable.Next we updated the DDOS attack generator to make it work on different platforms. And then we started adding new types of attack but didn't finished it.
+
+\section{Results}
+With the updates, the plugin now works smoothly across all tested platforms. The DDOS data generation feature was successfully integrated, enhancing the plugin's usefulness for machine learning and security testing.
+
+\section{Discussion}
+These improvements have significantly expanded the plugin’s capabilities, making it working with a lot of diffents OS and also more relevant for researchers in machine learning and cybersecurity. The ability to generate DDOS attack data is especially valuable, as it helps in developing algorithms that can detect and mitigate such threats.
+
+\section{Conclusion}
+The updated ConTackGen Plugin is now more robust, supporting a wider range of computing environments. Future work will aim to introduce more attack types and advanced features to further enhance the plugin’s utility and security features.
+
+
+\end{document}
