@@ -16,7 +16,7 @@ public class SSHAttack implements Runnable {
 		this.server = server;
 	}
 
-    public static void listFolderStructure(String username, String password, 
+    public static void execSSH(String username, String password, 
             String host, int port, String command) {
         Session session = null;
         ChannelExec channel = null;
@@ -55,7 +55,7 @@ public class SSHAttack implements Runnable {
     @Override
     public void run() {
 		while (amount > 0) {
-            listFolderStructure("root", "root", server.getHostName(), 22, "pwd");
+			execSSH("root", "root", server.getHostName(), 22, "ls");
             amount--;
         }
     }

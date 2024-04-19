@@ -42,7 +42,7 @@ import weka.datagenerators.ClassificationGenerator;
  * @version 2.0
  */
 @SuppressWarnings("serial")
-public class ConTacGen extends ClassificationGenerator {
+public class ConTackGen extends ClassificationGenerator {
 	public static final String DATE_STRING = "yyyy-MM-dd HH:mm:ss";
 
 	// Data set attributes
@@ -262,7 +262,7 @@ public class ConTacGen extends ClassificationGenerator {
 	 */
 	@Override
 	public String generateStart() throws Exception {
-		return "ConTacGen data";
+		return "ConTackGen data";
 	}
 
 	/**

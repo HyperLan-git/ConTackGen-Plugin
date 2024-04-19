@@ -23,7 +23,6 @@ public class PacketData {
 			this.TTL = ((IPv4Packet) p).getTimeToLive();
 			this.type = ((IPv4Packet) p).getProtocol().getName();
 		} else if(packet.hasProtocol(Protocol.IPv6)) {
-			// TODO get the correct header for port
 			p = (IPv6Packet) packet.getPacket(Protocol.IPv6);
 			this.checksum = "null";
 			this.TTL = ((IPv6Packet) p).getHopLimit();
