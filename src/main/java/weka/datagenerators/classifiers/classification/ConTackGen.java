@@ -320,6 +320,6 @@ public class ConTackGen extends ClassificationGenerator {
 	 * @param args the command-line arguments
 	 */
 	public static void main(String[] args) {
-		runDataGenerator(new ConTacGen(), args);
+		runDataGenerator(new ConTackGen(), args);
 	}
 }
